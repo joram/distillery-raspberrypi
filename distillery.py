@@ -25,7 +25,9 @@ sensors = {
 
 def sensor_values():
   d = {}
-  for name in sensors:
+  names = sensors.keys()
+  names.sort()
+  for name in names:
     d[name] = sensors[name].values
   return d
 
