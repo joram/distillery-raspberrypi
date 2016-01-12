@@ -13,7 +13,8 @@ class FloatSensor(object):
   def floating(self):
     return GPIO.input(self.pin)
 
-float_sensor = FloatSensor(21)
-while True:
-    print 'Floating' if float_sensor.floating else "Not floating"
-    time.sleep(0.2)
+if __name__ == "__main__":
+    float_sensor = FloatSensor(21)
+    while True:
+        print 'Floating' if float_sensor.floating else "Not floating"
+        time.sleep(0.2)

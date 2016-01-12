@@ -1,14 +1,23 @@
 #!/usr/bin/python
 from flask import Flask, render_template, request
 from stepper import Stepper
+from float_sensor import FloatSensor
 import json
 import thread 
 from arduino_usb import monitor_pins
 
 app = Flask(__name__)
 s = Stepper()
+float_sensor_1 = FloatSensor(21)
+float_sensor_2 = FloatSensor(22)
+
 pin_values = {}
 
+def sensor_values():
+  d = pin_values
+  d['float_1'] = float_sensor_1.floating
+  d['float_2'] = float_sensor_2.floating
+  return d
 
 def pin_value_callback(pin, value):
   pin_values[pin] = value
@@ -26,7 +35,7 @@ def static2(path):
 
 @app.route('/temperature', methods=['GET'])
 def tempurature():
-    return json.dumps(pin_values)
+    return json.dumps(sensor_values)
 
 
 @app.route('/stepper', methods=['POST'])
