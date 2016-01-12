@@ -1,7 +1,9 @@
 #!/usr/bin/python
 import time
 import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BOARD)
+
+if __name__ == "__main__":
+  GPIO.setmode(GPIO.BOARD)
 
 
 #http://www.jameco.com/Jameco/workshop/circuitnotes/raspberry_pi_circuit_note_fig2a.jpg

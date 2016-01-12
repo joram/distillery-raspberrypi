@@ -2,7 +2,6 @@
 import RPi.GPIO as GPIO
 import time
 
-GPIO.setmode(GPIO.BCM)
 
 class Sensor(object):
   
@@ -35,10 +34,9 @@ class Sensor(object):
       self.history.pop(0)
     return ct
 
-print("hello world 1")
-s1 = Sensor(pin_a=35, pin_b=37)
-print("hello world 2")
-while True:
-  print("hi")
-  print("sensor value: %s" % s1.analog_read())
-  time.sleep(1)
+if __name__ == "__main__":
+  while True:
+    GPIO.setmode(GPIO.BCM)
+    print("hi")
+    print("sensor value: %s" % s1.analog_read())
+    time.sleep(1)

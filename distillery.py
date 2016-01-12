@@ -4,12 +4,15 @@ from stepper import Stepper
 from float_sensor import FloatSensor
 import json
 import thread 
+import RPi.GPIO as GPIO
 from arduino_usb import monitor_pins
 
 app = Flask(__name__)
+
+GPIO.setmode(GPIO.BCM)
 s = Stepper()
 float_sensor_1 = FloatSensor(21)
-float_sensor_2 = FloatSensor(22)
+float_sensor_2 = FloatSensor(20)
 
 pin_values = {}
 
@@ -35,7 +38,7 @@ def static2(path):
 
 @app.route('/temperature', methods=['GET'])
 def tempurature():
-    return json.dumps(sensor_values)
+    return json.dumps(sensor_values())
 
 
 @app.route('/stepper', methods=['POST'])
@@ -60,4 +63,4 @@ def stepper():
 
 if __name__ == "__main__":
   thread.start_new_thread(monitor_pins, (pin_value_callback,))
-  app.run('0.0.0.0')
+  app.run('0.0.0.0', 80)

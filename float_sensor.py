@@ -1,7 +1,6 @@
 import RPi.GPIO as GPIO
 import time
 
-GPIO.setmode(GPIO.BCM)
 
 class FloatSensor(object):
 
@@ -14,6 +13,7 @@ class FloatSensor(object):
     return GPIO.input(self.pin)
 
 if __name__ == "__main__":
+    GPIO.setmode(GPIO.BCM)
     float_sensor = FloatSensor(21)
     while True:
         print 'Floating' if float_sensor.floating else "Not floating"
