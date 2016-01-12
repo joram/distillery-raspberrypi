@@ -1,0 +1,1 @@
+RPi.GPIO==0.5.11  # may need 'apt-get install python-dev'

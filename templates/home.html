@@ -1,0 +1,62 @@
+<html>
+  <head>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script> 
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="/static/js/temperature.js"></script>
+    <link href="/static/css/bootstrap-editable.css" rel="stylesheet">
+	<script src="/static/js/bootstrap-editable.js"></script>
+	<script>
+	$( document ).ready(function() {
+		$('#stepper_frequency').editable({
+		    type: 'text',
+		    pk: 1,
+		    url: '/stepper',
+		    title: 'Enter username',
+		    display: 'inline'
+		});
+
+		$('#stepper_direction').editable({
+		    type: 'select',
+		    defaultValue: '1',
+		    pk: 1,
+		    url: '/stepper',
+			showbuttons: false,
+	        source: [
+	            {value: 1, text: 'Forwards'},
+	            {value: 2, text: 'backwards'}
+	        ]
+	    }); 
+	    update_temparture_table("temperature");
+	});
+	</script>
+  </head>
+
+  <body>
+  	<div class="container" style="margin-top: 200px;">
+  		<div class="row">
+  			<div class="col-md-12 text-center">
+  				<h2>Distillery Config</h2>
+			</div>
+		</div>
+
+  		<div class="row">
+  			<div class="col-md-12 text-center">
+				Stepper frequency:
+		  		<a id="stepper_frequency">{{ stepper.frequency }}</a>
+		  	</div>
+	  	</div>
+  		<div class="row">
+  			<div class="col-md-12 text-center">
+  				Direction:
+				<a id="stepper_direction">Forwards</a>
+			</div>
+		</div>
+  		<div class="row">
+  		  <div class="col-md-12 text-center">
+                    <div id="temperature"></div>
+                  </div>
+                </div>
+	</div>
+  </body>
+</html>
