@@ -1,34 +1,39 @@
 #!/usr/bin/python
 from flask import Flask, render_template, request
 from stepper import Stepper
-from float_sensor import FloatSensor
+from sensor.float import FloatSensor
+from sensor.temperature import TemperatureSensorController, TemperatureSensor
 import json
 import thread 
 import RPi.GPIO as GPIO
 from arduino_usb import monitor_pins
 
 app = Flask(__name__)
-
 GPIO.setmode(GPIO.BCM)
-s = Stepper()
-float_sensor_1 = FloatSensor(21)
-float_sensor_2 = FloatSensor(20)
+controller = TemperatureSensorController()
 
-pin_values = {}
+sensors = {
+  'float_0': FloatSensor(pin=20, name="float0"),
+  'float_1': FloatSensor(pin=21, name="float1"),
+  'temp_0': TemperatureSensor(controller, "A0"),
+  'temp_1': TemperatureSensor(controller, "A1"),
+  'temp_2': TemperatureSensor(controller, "A2"),
+  'temp_3': TemperatureSensor(controller, "A3"),
+  'temp_4': TemperatureSensor(controller, "A4"),
+  'temp_5': TemperatureSensor(controller, "A5"),
+}
 
 def sensor_values():
-  d = pin_values
-  d['float_1'] = float_sensor_1.floating
-  d['float_2'] = float_sensor_2.floating
+  d = {}
+  for name in sensors:
+    d[name] = sensors[name].values
   return d
-
-def pin_value_callback(pin, value):
-  pin_values[pin] = value
 
 
 @app.route("/")
 def home():
-    return render_template("home.html", stepper=s)
+  s = None
+  return render_template("home.html", stepper=s)
 
 
 @app.route('/static/<path:path>')
@@ -62,5 +67,4 @@ def stepper():
 	return "thanks"
 
 if __name__ == "__main__":
-  thread.start_new_thread(monitor_pins, (pin_value_callback,))
   app.run('0.0.0.0', 80)

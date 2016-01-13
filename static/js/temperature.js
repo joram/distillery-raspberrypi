@@ -3,19 +3,18 @@ function poll_tmp(id){
       url: "/temperature",
     }).done(function(data) {
       data = JSON.parse(data);
-      table = '<table>';
+      html  = '';
       for(var key in data){
-        value = data[key];
-        table += "<tr><td>"+key+"</td><td>"+value+"</td></tr>";
+        html += "<div class='sensor col-xs-6'>"+key+"</div>";
+        html += "<div class='value col-xs-6'>"+data[key]+"</div>";
       };
-      table += "</table>";
-      document.getElementById(id).innerHTML = table;
+      document.getElementById(id).innerHTML = html;
     });
 }
 
-function update_temparture_table(id){
+function update_sensors(id){
   poll_tmp(id);
   setInterval(function(){
     poll_tmp(id);
-  }, 5000);
+  }, 1000);
 }

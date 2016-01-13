@@ -5,6 +5,7 @@
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
     <script src="/static/js/temperature.js"></script>
     <link href="/static/css/bootstrap-editable.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
 	<script src="/static/js/bootstrap-editable.js"></script>
 	<script>
 	$( document ).ready(function() {
@@ -27,7 +28,7 @@
 	            {value: 2, text: 'backwards'}
 	        ]
 	    }); 
-	    update_temparture_table("temperature");
+	    update_sensors("sensors");
 	});
 	</script>
   </head>
@@ -52,10 +53,7 @@
 				<a id="stepper_direction">Forwards</a>
 			</div>
 		</div>
-  		<div class="row">
-  		  <div class="col-md-12 text-center">
-                    <div id="temperature"></div>
-                  </div>
+  		<div id="sensors" class="row">
                 </div>
 	</div>
   </body>
