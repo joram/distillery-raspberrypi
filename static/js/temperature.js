@@ -5,8 +5,16 @@ function poll_tmp(id){
       data = JSON.parse(data);
       tbody = $("#"+id).find("tbody");
       tbody.find(".auto-update").remove();
-      for(var key in data){
-        tbody.append("<tr class='auto-update'><td class='key'>"+key+"</td><td class='value'>"+data[key]+"</td></tr>");
+      
+      var keys = []
+      for(var key in data) keys.push( key );
+      keys.sort();
+
+      // forgive me father, for I have sined with ugly code.
+      for (var i = 0; i < keys.length; i++) {      
+        var key=keys[i];
+        var value = data[key]; 
+        tbody.append("<tr class='auto-update'><td class='key'>"+key+"</td><td class='value'>"+value+"</td></tr>");
       };
     });
 }

@@ -12,10 +12,6 @@ app = Flask(__name__)
 GPIO.setmode(GPIO.BCM)
 controller = TemperatureSensorController()
 
-# Turn pump on
-GPIO.setup(16, GPIO.OUT)
-GPIO.output(16, GPIO.HIGH)
-
 sensors = {
   'float_0': FloatSensor(pin=20, name="float0"),
   'float_1': FloatSensor(pin=21, name="float1"),
@@ -32,7 +28,10 @@ def sensor_values():
   names = sensors.keys()
   names.sort()
   for name in names:
-    d[name] = sensors[name].values
+    values = sensors[name].values
+    d[name] = None
+    if values:
+      d[name] = sum(values)/len(values)
   return d
 
 
