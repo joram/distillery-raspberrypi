@@ -6,9 +6,9 @@
     <script src="/static/js/temperature.js"></script>
     <link href="/static/css/bootstrap-editable.css" rel="stylesheet">
     <link href="/static/css/style.css" rel="stylesheet">
-	<script src="/static/js/bootstrap-editable.js"></script>
-	<script>
-	$( document ).ready(function() {
+    <script src="/static/js/bootstrap-editable.js"></script>
+    <script>
+      $( document ).ready(function() {
 		$('#stepper_frequency').editable({
 		    type: 'text',
 		    pk: 1,
@@ -21,40 +21,46 @@
 		    type: 'select',
 		    defaultValue: '1',
 		    pk: 1,
-		    url: '/stepper',
+        url: '/stepper',
 			showbuttons: false,
 	        source: [
 	            {value: 1, text: 'Forwards'},
 	            {value: 2, text: 'backwards'}
 	        ]
 	    }); 
-	    update_sensors("sensors");
+	    update_sensors("distillery-data");
 	});
-	</script>
+    </script>
   </head>
 
   <body>
-  	<div class="container" style="margin-top: 200px;">
-  		<div class="row">
-  			<div class="col-md-12 text-center">
-  				<h2>Distillery Config</h2>
-			</div>
-		</div>
-
-  		<div class="row">
-  			<div class="col-md-12 text-center">
-				Stepper frequency:
-		  		<a id="stepper_frequency">{{ stepper.frequency }}</a>
-		  	</div>
-	  	</div>
-  		<div class="row">
-  			<div class="col-md-12 text-center">
-  				Direction:
-				<a id="stepper_direction">Forwards</a>
-			</div>
-		</div>
-  		<div id="sensors" class="row">
-                </div>
+    <div class="container" style="margin-top: 200px;">
+      <div class="row">
+        <div class="col-md-12 text-center">
+  	  <h2>Distillery Config</h2>
 	</div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+	  <table id="distillery-data" class="table">
+	    <tbody>
+	    
+              <tr>
+	        <td class='key'>Stepper Freq:</td>
+		<td class='value'><a id="stepper_frequency">{{ stepper.frequenecy }}</a></td>
+	      </tr>
+
+	      <tr>
+	        <td class='key'>Direction:</td>
+	        <td class='value'><a id="stepper_direction">Forwards</a></td>
+	      </tr>
+
+	    </tbody>
+	  </table>
+	</div>
+      </div>
+
+    </div>
   </body>
 </html>

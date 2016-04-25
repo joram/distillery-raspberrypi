@@ -3,12 +3,11 @@ function poll_tmp(id){
       url: "/temperature",
     }).done(function(data) {
       data = JSON.parse(data);
-      html  = '';
+      tbody = $("#"+id).find("tbody");
+      tbody.find(".auto-update").remove();
       for(var key in data){
-        html += "<div class='sensor col-xs-6'>"+key+"</div>";
-        html += "<div class='value col-xs-6'>"+data[key]+"</div>";
+        tbody.append("<tr class='auto-update'><td class='key'>"+key+"</td><td class='value'>"+data[key]+"</td></tr>");
       };
-      document.getElementById(id).innerHTML = html;
     });
 }
 
