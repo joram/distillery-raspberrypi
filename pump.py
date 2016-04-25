@@ -3,13 +3,24 @@
 import RPi.GPIO as GPIO
 from time import sleep
 
-# The script as below using BCM GPIO 00..nn numbers
-GPIO.setmode(GPIO.BCM)
+class Pump(object):
 
-# Set relay pins as output
-GPIO.setup(21, GPIO.OUT)
-while True:
-	GPIO.output(21, GPIO.HIGH)
-	sleep(5)
-	GPIO.output(21, GPIO.LOW)
-	sleep(5)
+	def __init__(self, pin):
+		self.pin = pin
+		GPIO.setup(self.pin, GPIO.OUT)
+
+	def on(self):
+		GPIO.output(self.pin, GPIO.LOW)
+
+	def off(self):
+		GPIO.output(self.pin, GPIO.HIGH)
+
+if __name__ == "__main__":
+	GPIO.setmode(GPIO.BCM)
+	pins = [16, 20]
+	pump = Pump(16)
+	while True:
+		pump.on()
+		sleep(5)
+		pump.off()
+		sleep(5)
