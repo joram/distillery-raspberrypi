@@ -17,7 +17,6 @@ class FlowMeter(object):
 		GPIO.add_event_detect(pin, GPIO.FALLING, callback=self._pulse, bouncetime=30)
 
 	def _pulse(self, channel):
-		print channel
 		self.pulse_history.append(datetime.now())
 		self._trim_history()
 
@@ -35,9 +34,14 @@ class FlowMeter(object):
 		self._trim_history()
 		return self.ml_per_pulse * len(self.pulse_history)
 
+	@property
+	def values(self):
+		return [self.flow()]
+
+
 if __name__ == "__main__":
 	GPIO.setmode(GPIO.BCM)
-	pins = [13, 19]
+	pins = [26]
 	flow_meters = [FlowMeter(pin) for pin in pins]
 	while True:
 		for fm in flow_meters:

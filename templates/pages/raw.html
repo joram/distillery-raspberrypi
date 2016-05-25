@@ -1,0 +1,69 @@
+
+    <script>
+      $( document ).ready(function() {
+		$('#stepper_frequency').editable({
+		    type: 'text',
+		    pk: 1,
+		    url: '/stepper',
+		    title: 'Enter username',
+		    display: 'inline'
+		});
+
+		$('#stepper_direction').editable({
+		    type: 'select',
+		    defaultValue: '1',
+		    pk: 1,
+        url: '/stepper',
+			showbuttons: false,
+	        source: [
+	            {value: 1, text: 'Forwards'},
+	            {value: 2, text: 'backwards'}
+	        ]
+	    }); 
+	    update_sensors("distillery-data");
+	});
+    </script>
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h2>Distillery Config</h2>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <table class="table">
+	  <tbody>
+	   
+            <tr>
+	      <td class='key'>Stepper Freq:</td>
+	      <td class='value'><a id="stepper_frequency">{{ stepper.frequenecy }}</a></td>
+	    </tr>
+
+	    <tr>
+	      <td class='key'>Direction:</td>
+	      <td class='value'><a id="stepper_direction">Forwards</a></td>
+	    </tr>
+
+	  </tbody>
+        </table>
+      </div>
+
+        <div class="col-md-6">
+	  <table id="distillery-data" class="table">
+	    <tbody>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-md-12">
+	  <form method="post">
+	    <input type="text" name="probe"></input>
+	    <input type="text" name="value"></input>
+	    <input type="submit"/>
+	  </form>
+        </div>
+      </div>
+
+    </div>

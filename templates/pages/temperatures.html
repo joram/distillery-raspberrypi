@@ -1,0 +1,62 @@
+{% block extra_head %}
+    <script src="https://jquery-csv.googlecode.com/files/jquery.csv-0.71.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(initGraph);
+      var data_uri = "/temperature";
+      var graph;
+      var options = {
+        title: 'Temperatures',
+        curveType: 'function',
+        legend: { position: 'bottom' }
+      };
+
+
+      function initGraph(){
+        graph = new google.visualization.LineChart(document.getElementById('temperature_graph'));
+        setTimeout(updateGraph, 1000);
+      }
+
+      function updateGraph(){
+        $.get(data_uri, function(raw_data) {
+          data = cleanData(raw_data);
+          data = google.visualization.arrayToDataTable(data);
+          graph.draw(data, options);
+        });
+        setTimeout(updateGraph, 50);
+      }
+
+      function cleanData(raw_data){
+        raw_data = $.parseJSON(raw_data);
+        headers = ['Time', 'temp_0', 'temp_1', 'temp_2', 'temp_3', 'temp_4', 'temp_5'];
+        clean_data = [headers];
+
+        if (raw_data['temp_0'] != null){
+          num_values = raw_data['temp_0'].length;
+          for(i=0; i<num_values; i++){
+            clean_data.push(["T"+i, raw_data['temp_0'][i],  raw_data['temp_1'][i], raw_data['temp_2'][i], raw_data['temp_3'][i], raw_data['temp_4'][i], raw_data['temp_5'][i]]);
+          }
+        }
+        return clean_data;
+      }
+
+      //create trigger to resizeEnd event     
+      $(window).resize(function() {
+        if(this.resizeTO) clearTimeout(this.resizeTO);
+          this.resizeTO = setTimeout(function() {
+            $(this).trigger('resizeEnd');
+        }, 500);
+      });
+
+      //redraw graph when window resize is completed  
+      $(window).on('resizeEnd', function() {
+        drawChart();
+      });
+
+    </script>
+{% endblock %}
+
+{% block content %}
+  <div id="temperature_graph" style="width: 100%; height: 500px"></div>
+{% endblock %}
