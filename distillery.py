@@ -25,10 +25,11 @@ sensors = {
   'flow': FlowMeter(pin=26),
 }
 
-logs_filename = "temp_logs.txt"
+#logs_filename = "temp_logs.txt"
 def write_logs(s):
-  with open(logs_filename, 'a') as f:
-    f.write("%s\n" % s)
+#  with open(logs_filename, 'a') as f:
+#    f.write("%s\n" % s)
+  pass
 
 def sensor_values():
   d = {}

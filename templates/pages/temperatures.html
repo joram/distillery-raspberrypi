@@ -1,62 +1,81 @@
 {% block extra_head %}
-    <script src="https://jquery-csv.googlecode.com/files/jquery.csv-0.71.min.js"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(initGraph);
-      var data_uri = "/temperature";
-      var graph;
-      var options = {
-        title: 'Temperatures',
-        curveType: 'function',
-        legend: { position: 'bottom' }
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.js"></script>
+{% endblock %}
+
+
+{% block content %}
+  <canvas id="temperature_graph" style="width:100%; height:100%;"></canvas>
+  <script type="text/javascript" charset="utf-8">
+    var randomColorFactor = function() {
+      return Math.round(Math.random() * 255);
+    };
+    var randomColor = function(opacity) {
+      return 'rgba(' + randomColorFactor() + ',' + randomColorFactor() + ',' + randomColorFactor() + ',' + (opacity || '.3') + ')';
+    };
+
+    var data_uri = "/temperature";
+      var chart;
+      var chart_max_values = 50;
+      var chart_update_ms = 500;
+      var chart_config =  {
+        type: 'line',
+        data: {
+  	  labels: [],
+          datasets: [],
+        },
+        options: {}
       };
 
-
-      function initGraph(){
-        graph = new google.visualization.LineChart(document.getElementById('temperature_graph'));
-        setTimeout(updateGraph, 1000);
+      for(i=0; i<6; i++){
+        chart_config.data.datasets.push({
+          label: "temp_"+i,
+          borderColor: randomColor((i+4)/10),
+          backgroundColor: 'rgba(0, 0, 0, 0)',
+          data: []
+        })
       }
 
       function updateGraph(){
         $.get(data_uri, function(raw_data) {
-          data = cleanData(raw_data);
-          data = google.visualization.arrayToDataTable(data);
-          graph.draw(data, options);
-        });
-        setTimeout(updateGraph, 50);
-      }
+          raw_data = $.parseJSON(raw_data);
+          if (raw_data['temp_0'] != null){
+ 
+            // add data to lines
+            $.each(chart.data.datasets, function(i, probe){
+              val = average(raw_data[probe.label])
+              chart.data.datasets[i].data.push(val) 
+              if (chart.data.datasets[i].data.length > chart_max_values){
+                chart.data.datasets[i].data.shift();
+              }
+            })
 
-      function cleanData(raw_data){
-        raw_data = $.parseJSON(raw_data);
-        headers = ['Time', 'temp_0', 'temp_1', 'temp_2', 'temp_3', 'temp_4', 'temp_5'];
-        clean_data = [headers];
+            // update y values
+            now = new Date().toLocaleString()
+            chart.data.labels.push(now)
+            if (chart.data.labels.length > chart_max_values){
+              chart.data.labels.shift();
+            }
 
-        if (raw_data['temp_0'] != null){
-          num_values = raw_data['temp_0'].length;
-          for(i=0; i<num_values; i++){
-            clean_data.push(["T"+i, raw_data['temp_0'][i],  raw_data['temp_1'][i], raw_data['temp_2'][i], raw_data['temp_3'][i], raw_data['temp_4'][i], raw_data['temp_5'][i]]);
           }
-        }
-        return clean_data;
+          chart.update(duration=chart_update_ms/2, lazy=false);
+        });
+        setTimeout(updateGraph, chart_update_ms);
       }
 
-      //create trigger to resizeEnd event     
-      $(window).resize(function() {
-        if(this.resizeTO) clearTimeout(this.resizeTO);
-          this.resizeTO = setTimeout(function() {
-            $(this).trigger('resizeEnd');
-        }, 500);
-      });
+      function average(data){
+        s = 0;
+        for(i=0; i< data.length; i++){
+         s+= data[i]
+        }
+        return s/data.length;
+      }
 
-      //redraw graph when window resize is completed  
-      $(window).on('resizeEnd', function() {
-        drawChart();
-      });
-
-    </script>
-{% endblock %}
-
-{% block content %}
-  <div id="temperature_graph" style="width: 100%; height: 500px"></div>
+    function initGraph(){
+      var ctx = document.getElementById("temperature_graph");
+      chart = new Chart(ctx, chart_config);
+      setTimeout(updateGraph, 1000);
+    }
+    initGraph();
+  </script>
 {% endblock %}
