@@ -13,6 +13,7 @@ class TemperatureSensorController(object):
     self.serial = serial.Serial('/dev/ttyACM0', 9600)
     self.poll_sleep = poll_sleep
     self.sensors = {}
+
     thread.start_new_thread(self._poll_temps, ())
 
   def _poll_temps(self):
@@ -20,6 +21,7 @@ class TemperatureSensorController(object):
     while True:
       self.read_values()
       time.sleep(self.poll_sleep)
+
 
   def read_values(self):
     # read raw values from arduino
@@ -49,16 +51,28 @@ class TemperatureSensorController(object):
 
 class TemperatureSensor(BaseSensor):
 
-  def __init__(self, controller, name="A0", max_values=10):
+  def __init__(self, controller, name="A0", max_values=10, calib=[(0,0), (1,1)]):
     super(TemperatureSensor, self).__init__(name, None, None)
     self._values = []
     self.max_values = max_values
     self.controller = controller
-    controller.register(self)
+
+    # break the datapoints apart into its base parts
+    [(x1, y1), (x2, y2)] = calib
+    rise = y2-y1
+    run = x2-x1
+    self.slope = rise/run
+    self.y_intercept = y1 - self.slope*x1
+
+    controller.register(self)  
+
+  def celcius(self, val):
+    return self.slope*val + self.y_intercept
 
   def add_value(self, v):
     if v > 0 and v < 1023:
-      self._values.append(v)
+      c = self.celcius(v)
+      self._values.append(c)
     if len(self._values) > self.max_values:
       self._values.pop(0)
 

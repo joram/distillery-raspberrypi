@@ -16,12 +16,12 @@ controller = TemperatureSensorController()
 sensors = {
   'float_0': FloatSensor(pin=20, name="float0"),
   'float_1': FloatSensor(pin=21, name="float1"),
-  'temp_0': TemperatureSensor(controller, "A0"),
-  'temp_1': TemperatureSensor(controller, "A1"),
-  'temp_2': TemperatureSensor(controller, "A2"),
-  'temp_3': TemperatureSensor(controller, "A3"),
-  'temp_4': TemperatureSensor(controller, "A4"),
-  'temp_5': TemperatureSensor(controller, "A5"),
+  'temp_0': TemperatureSensor(controller, "A0", calib=[(612, 23.2), (953, 76.1)]),
+  'temp_1': TemperatureSensor(controller, "A1", calib=[(606, 21.8), (943, 76.1)]),
+  'temp_2': TemperatureSensor(controller, "A2", calib=[(605, 22.5), (946, 75.0)]),
+  'temp_3': TemperatureSensor(controller, "A3", calib=[(609, 22.5), (942, 72.4)]),
+  'temp_4': TemperatureSensor(controller, "A4", calib=[(608, 24.0), (970, 85.0)]),
+  'temp_5': TemperatureSensor(controller, "A5", calib=[(619, 22.4), (959, 80.5)]),
   'flow': FlowMeter(pin=26),
 }
 
