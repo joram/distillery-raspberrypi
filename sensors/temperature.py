@@ -48,14 +48,15 @@ class TemperatureSensorController(object):
   def register(self, sensor):
     self.sensors[sensor.name] = sensor
 
+global TEMP_CONTROLLER
+TEMP_CONTROLLER = TemperatureSensorController()
 
 class TemperatureSensor(BaseSensor):
 
-  def __init__(self, controller, name="A0", max_values=10, calib=[(0,0), (1,1)]):
-    super(TemperatureSensor, self).__init__(name, None, None)
+  def __init__(self, name="A0", max_values=10, calib=[(0,0), (1,1)]):
+    super(TemperatureSensor, self).__init__(name)
     self._values = []
     self.max_values = max_values
-    self.controller = controller
 
     # break the datapoints apart into its base parts
     [(x1, y1), (x2, y2)] = calib
@@ -63,8 +64,8 @@ class TemperatureSensor(BaseSensor):
     run = x2-x1
     self.slope = rise/run
     self.y_intercept = y1 - self.slope*x1
-
-    controller.register(self)  
+    global TEMP_CONTROLLER
+    TEMP_CONTROLLER.register(self)  
 
   def celcius(self, val):
     return self.slope*val + self.y_intercept

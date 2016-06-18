@@ -1,0 +1,91 @@
+{% block extra_head %}
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+{% endblock %}
+
+
+{% block content %}
+  <script type="text/javascript" charset="utf-8">    
+
+    function update_bildge_variable_state(variable, uid, state){
+      var on = $("#"+uid+"_"+variable+"_on");
+      var off = $("#"+uid+"_"+variable+"_off");
+      if(state){
+        on.show();
+        off.hide();
+      } else {
+        on.hide();
+        off.show();
+      }          
+    }
+    
+    function updateActuators(data_uri, update_delta){
+      $.get(data_uri, function(raw_data) {
+        var data = $.parseJSON(raw_data);
+        for(i=0; i<data['bildges'].length; i++){
+          var bildge = data['bildges'][i]
+          update_bildge_variable_state("pump", bildge.uid, bildge.pump_state);
+          update_bildge_variable_state("float", bildge.uid, bildge.float_state);
+        }
+        setTimeout(function(){updateActuators(data_uri, update_delta)}, update_delta); 
+      });
+    }
+
+    
+    $( document ).ready(function() {
+      updateActuators("/actuators", 1000);
+    });
+  </script>
+
+  <div class="container">
+    <div class="row">
+
+    {% for bildge in bildges %}
+      <div class="col-sm-4">
+        <table class="table">
+          <thead>
+            <th colspan="2">{{ bildge.name }}</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Float: </td>
+              <td>
+                <span id="{{ bildge.uid }}_float_on" class="label label-success" style="display:none;">ON</span>
+                <span id="{{ bildge.uid }}_float_off" class="label label-danger" style="display:none;">OFF</span>
+              </td>
+            </tr>
+            <tr>
+              <td>Pump: </td>
+              <td>
+                <span id="{{ bildge.uid }}_pump_on" class="label label-success" style="display:none;">ON</span>
+                <span id="{{ bildge.uid }}_pump_off" class="label label-danger" style="display:none;">OFF</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    {% endfor %}
+
+    {% for valve in flow_valves %}
+      <div class="col-sm-4">
+        <table class="table">
+          <thead>
+            <th colspan="2">{{ valve.name }}</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Valve Setting: </td>
+              <td id="{{ valve.uid }}_valve_setting">?</td>
+            </tr>
+            <tr>
+              <td>Current Flow Rate: </td>
+              <td id="{{ valve.uid }}_flow_rate">?</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    {% endfor %}
+
+    </div>
+  </div>
+
+{% endblock %}

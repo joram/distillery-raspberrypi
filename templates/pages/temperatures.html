@@ -28,10 +28,12 @@
       };
 
       for(i=0; i<6; i++){
+        color = randomColor((i+4)/10)
+        clear = 'rgba(0, 0, 0, 0)'
         chart_config.data.datasets.push({
           label: "temp_"+i,
-          borderColor: randomColor((i+4)/10),
-          backgroundColor: 'rgba(0, 0, 0, 0)',
+          borderColor: color,
+          backgroundColor: clear,
           data: []
         })
       }
@@ -51,7 +53,8 @@
             })
 
             // update y values
-            now = new Date().toLocaleString()
+            now = new Date()
+            now = ""+now.getHours()+":"+now.getMinutes()+":"+now.getSeconds()
             chart.data.labels.push(now)
             if (chart.data.labels.length > chart_max_values){
               chart.data.labels.shift();
