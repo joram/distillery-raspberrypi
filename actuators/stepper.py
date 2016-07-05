@@ -3,42 +3,47 @@ from Adafruit_MotorHAT import Adafruit_MotorHAT
  
 import time
 import atexit
-#!/usr/bin/python
-import time
 import RPi.GPIO as GPIO
-
+import thread
 
 class Stepper(object):
 
-	def __init__(self, mhat,  motor_id=1):
-		self.mhat = mhat
-		self.motor_id = motor_id
-		self.direction = True
-		self._stepper = self.mhat.getStepper(200, self.motor_id)
-		atexit.register(self.turnOffMotors)
+  MAX_TICKS = 100
+  MAX_TICK_SIZE = 10
+  TICK_TYPE = Adafruit_MotorHAT.INTERLEAVE
 
+  def __init__(self, mhat,  motor_id=1):
+    self.mhat = mhat
+    self.motor_id = motor_id
+    self._current_tick = 0
+    self._desired_tick = 0
+    self._stepper = self.mhat.getStepper(200, self.motor_id)
+    atexit.register(self.turnOffMotors)
+    thread.start_new_thread(self._tick_thread, tuple())
 
-	def set_speed(self, rpm):
-		self._stepper.setSpeed(rpm)
-		while (True):
-			print("Single coil steps")
+  def tick_to(self, target):
+    self._desired_tick = target
 
-			direction = Adafruit_MotorHAT.FORWARD if self.direction else Adafruit_MotorHAT.BACKWARD
-			self._stepper.step(1000, direction, Adafruit_MotorHAT.INTERLEAVE)
+  def _tick_thread(self):
+    while True:
+      if self._current_tick != self._desired_tick:
+        self._tick()
+      else:
+        time.sleep(0.5)
 
-	def set_direction(self, direction):
-		self.direction = direction
-		GPIO.output(self.dir_pin, 1 if direction else 0)
+  def _tick(self):
+    print "at:%s, want:%s" % (self._current_tick, self._desired_tick)
+    ticks = self._current_tick - self._desired_tick
+    direction = ticks > 0
+    ticks_remaining = abs(ticks)
+    direction = Adafruit_MotorHAT.FORWARD if direction else Adafruit_MotorHAT.BACKWARD
+    ticks = min(self.MAX_TICK_SIZE, ticks_remaining)
+    self._stepper.step(ticks, direction, Adafruit_MotorHAT.INTERLEAVE)
+    self._current_tick += ticks * (1 if direction else -1)
 
-	def turnOffMotors():
-        	mh.getMotor(1).run(Adafruit_MotorHAT.RELEASE)
-        	mh.getMotor(2).run(Adafruit_MotorHAT.RELEASE)
-        	mh.getMotor(3).run(Adafruit_MotorHAT.RELEASE)
-        	mh.getMotor(4).run(Adafruit_MotorHAT.RELEASE)
+  def turnOffMotors(self):
+    self.mhat.getMotor(1).run(Adafruit_MotorHAT.RELEASE)
+    self.mhat.getMotor(2).run(Adafruit_MotorHAT.RELEASE)
+    self.mhat.getMotor(3).run(Adafruit_MotorHAT.RELEASE)
+    self.mhat.getMotor(4).run(Adafruit_MotorHAT.RELEASE)
 
-if __name__ == "__main__":
-  GPIO.setmode(GPIO.BOARD)
-  motor_hat = Adafruit_MotorHAT(addr = 0x60)
-  stepper = Stepper(motor_hat)
-  stepper.set_speed(30)
-  time.sleep(30)

@@ -19,6 +19,9 @@ class FlowValve(object):
   def flow_rate(self):
     return 0
 
+  def tick_to(self, tick):
+    self.stepper.tick_to(tick)
+
   @property
   def stepper_setting(self):
     return 1

@@ -6,6 +6,7 @@ import json
 import thread 
 import RPi.GPIO as GPIO
 from arduino_usb import monitor_pins
+from auth import requires_auth
 
 app = Flask(__name__)
 GPIO.setmode(GPIO.BOARD)
@@ -36,6 +37,8 @@ bildges = [actuators['bildge_in'], actuators['bildge_waste']]
 valves = [actuators['wash_input']]
 #bildges = [actuators['bildge_in']]
 
+valves[0].tick_to(450)
+#valves[0].tick_to(-11000)
 
 def sensor_values():
   d = {}
@@ -48,8 +51,8 @@ def sensor_values():
       d[name] = values # sum(values)/len(values)
   return d
 
-
 @app.route("/", methods=["GET", "POST"])
+@requires_auth
 def home():
   s = None
   if request.method == 'POST':
