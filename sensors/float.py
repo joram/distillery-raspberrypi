@@ -45,3 +45,9 @@ class FloatSensor(BaseSensor):
   def values(self):
     return [self.value]
 
+if __name__ == "__main__":
+  GPIO.setmode(GPIO.BOARD)
+  b = FloatSensor(pin=22)
+  while True:
+    time.sleep(0.5)
+    print b.value

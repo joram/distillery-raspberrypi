@@ -1,2 +1,3 @@
 #!/bin/bash
-sudo ./distillery.py
+source /home/joram/.bashrc
+sudo -E ./distillery.py
